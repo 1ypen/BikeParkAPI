@@ -10,8 +10,15 @@ User = get_user_model()
 
 class Brand(models.Model):
     name = models.CharField(
-        max_length=255
+        max_length=255,
+        verbose_name=_('имя бренда'),
+        help_text=_(
+            'format: required, max_len-255'
+        )
     )
+
+    def __str__(self):
+        return self.name
 
 
 class Media(models.Model):
@@ -42,16 +49,17 @@ class Bicycle(models.Model):
         max_length=255,
         verbose_name=_('Название'),
         help_text=_(
-            'format: required, char, max-255'
+            'format: required, max_len-255'
         )
     )
     cover_image = models.ImageField(
-        upload_to='media/bicycle/'
+        upload_to='media/bicycle/',
+        verbose_name=_("главная фотография велосипеда")
     )
     images = models.ManyToManyField(
-        Media
+        Media,
+        verbose_name=_("фотографии велосипеда")
     )
-
     weight_in_kg = models.DecimalField(
         max_digits=4,
         decimal_places=2,
@@ -147,6 +155,9 @@ class Price(models.Model):
         help_text=_('format: required, true=current')
     )
 
+    def __str__(self):
+        return str(self.price)
+
 
 class Order(models.Model):
     created_date = models.DateTimeField(
@@ -159,31 +170,34 @@ class Order(models.Model):
         verbose_name=_('Aрендатор'),
         related_name='orders'
     )
-    total_sum = models.IntegerField()
+    total_sum = models.DecimalField(
+        decimal_places=2,
+        max_digits=10,
+        verbose_name=_('полная сумма заказа'),
+        help_text=_('format: required, decimal_places=2, max_digits=10')
+    )
 
 
 class OrderDetail(models.Model):
-
     start_date = models.DateTimeField(
-        verbose_name=_('Дата начала аренды')
+        verbose_name=_('Дата начала аренды'),
+        help_text=_("format: YYYY-MM-DD H:M")
     )
     end_date = models.DateTimeField(
-        verbose_name=_('Дата конца аренды')
+        verbose_name=_('Дата конца аренды'),
+        help_text=_("format: YYYY-MM-DD H:M")
     )
-
     order = models.ForeignKey(
         Order,
         on_delete=models.DO_NOTHING,
         related_name='order_details'
     )
-
     bicycle_price = models.DecimalField(
         decimal_places=2,
         max_digits=7,
         verbose_name=_('цена велосипеда'),
         help_text=_('format: required, decimal_places=2, max_digits=7')
     )
-
     bicycle = models.ForeignKey(
         Bicycle,
         on_delete=models.DO_NOTHING,
