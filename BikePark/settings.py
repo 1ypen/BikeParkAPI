@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'phonenumber_field',
     
     # local apps
-    'catalog'
+    'catalog',
+    'account',
 
 ]
 
@@ -101,6 +102,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+# Auth conf
+AUTH_USER_MODEL = 'account.User'
 
 # Internationalization
 
