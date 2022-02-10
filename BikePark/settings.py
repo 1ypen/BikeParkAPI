@@ -29,10 +29,12 @@ INSTALLED_APPS = [
 
     # external apps
     'rest_framework',
+    'rest_framework_simplejwt',
     'debug_toolbar',
     'django_filters',
     'corsheaders',
     'phonenumber_field',
+    'djoser',
     
     # local apps
     'catalog',
@@ -106,6 +108,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # Auth conf
 AUTH_USER_MODEL = 'account.User'
 
+SIMPLE_JWT = {
+   'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
 # Internationalization
 
 LANGUAGE_CODE = 'en-us'
@@ -131,7 +137,12 @@ INTERNAL_IPS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
 }
 
 CORS_ALLOW_ALL_ORIGINS = True

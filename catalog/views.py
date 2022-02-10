@@ -1,5 +1,6 @@
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.permissions import IsAuthenticated
 
 
 from .models import Bicycle, Order
@@ -25,6 +26,7 @@ class BicycleListAPI(ListAPIView):
     get information about all bikes
     """
 
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['size', 'type', 'brand__name']
 
