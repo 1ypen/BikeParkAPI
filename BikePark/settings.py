@@ -32,7 +32,8 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django_filters',
     'corsheaders',
-
+    'phonenumber_field'
+    
     # local apps
     'catalog'
 
