@@ -1,9 +1,10 @@
+from django.db.models import OuterRef, Subquery
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 
 
-from .models import Bicycle, Order
+from .models import Bicycle, Order, Price
 from .serializers import BicycleDetailSerializer, BicycleListSerializer, OrderCreateSerializer, OrderSerializer
 
 
@@ -26,12 +27,18 @@ class BicycleListAPI(ListAPIView):
     get information about all bikes
     """
 
-    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['size', 'type', 'brand__name']
 
     def get_queryset(self):
+
+        price = Price.objects.filter(
+            bicycle=OuterRef('pk'),
+            is_current=True
+        )
+
         bicycles_queryset = Bicycle.objects.filter(is_active=True) \
+            .annotate(price=Subquery(price.values('price'))) \
             .select_related('brand')
 
         return bicycles_queryset

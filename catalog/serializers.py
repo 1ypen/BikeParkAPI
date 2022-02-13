@@ -46,15 +46,12 @@ class OrderDetailSerializer(serializers.ModelSerializer):
 class BicycleListSerializer(serializers.ModelSerializer):
 
     brand_name = serializers.CharField(source='brand.name')
-    price = serializers.SerializerMethodField(method_name='get_price')
+    price = serializers.DecimalField(max_digits=7, decimal_places=2)
     rental_days = serializers.SerializerMethodField(method_name='get_rental_days')
 
     class Meta:
         model = Bicycle
         fields = ('id', 'name', 'cover_image', 'wheel_diameter', 'brand_name', 'price', 'rental_days')
-
-    def get_price(self, bicycle_obj: Bicycle):
-        return bicycle_obj.prices.get(is_current=True).price
 
     def get_rental_days(self, bicycle_obj: Bicycle):
         order_details = bicycle_obj.order_details.filter(end_date__gte=datetime.now())
