@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.conf import settings
 
 from rest_framework import serializers
 
@@ -12,7 +12,10 @@ class MediaSerializer(serializers.ModelSerializer):
         fields = ('image', )
 
     def to_representation(self, instance: Media):
-        return instance.image.url
+        request = self.context.get('request')
+        domain = request.build_absolute_uri('/')[:-1]
+        photo_url = instance.image.url
+        return domain + photo_url
 
 
 class BicycleDetailSerializer(serializers.ModelSerializer):
@@ -47,7 +50,7 @@ class BicycleListSerializer(serializers.ModelSerializer):
 
     brand_name = serializers.CharField(source='brand__name')
     price = serializers.DecimalField(max_digits=7, decimal_places=2)
-    cover_image = serializers.URLField()
+    cover_image = serializers.SerializerMethodField()
     start_date = serializers.DateTimeField()
     end_date = serializers.DateTimeField()
 
@@ -55,9 +58,11 @@ class BicycleListSerializer(serializers.ModelSerializer):
         model = Bicycle
         fields = ('id', 'name', 'cover_image', 'wheel_diameter', 'brand_name', 'price', 'start_date', 'end_date')
 
-    # def get_rental_days(self, bicycle_obj: Bicycle):
-    #     order_details = bicycle_obj.order_details.filter(end_date__gte=datetime.now())
-    #     return OrderDetailSerializer(order_details, many=True).data
+    def get_cover_image(self, bicycle):
+        request = self.context.get('request')
+        domain = request.build_absolute_uri('/')[:-1]
+        photo_url = bicycle.get('cover_image')
+        return domain + '/media/' + photo_url
 
 
 class OrderSerializer(serializers.ModelSerializer):

@@ -22,7 +22,7 @@ class Brand(models.Model):
 
 
 class Media(models.Model):
-    image = models.ImageField(upload_to='media/bicycle/')
+    image = models.ImageField(upload_to='bicycle/')
 
 
 class Bicycle(models.Model):
@@ -53,7 +53,7 @@ class Bicycle(models.Model):
         )
     )
     cover_image = models.ImageField(
-        upload_to='media/bicycle/',
+        upload_to='bicycle/',
         verbose_name=_("главная фотография велосипеда")
     )
     images = models.ManyToManyField(
