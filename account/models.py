@@ -4,7 +4,7 @@ from django.db import models
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, login, name, phone_number, password=None):
+    def create_user(self, email, name, phone_number, password=None):
         """
         Creates and saves a User with the given email, login
         name, phone_number, and password.
@@ -12,15 +12,11 @@ class UserManager(BaseUserManager):
         if not email:
             raise ValueError('Users must have an email address')
 
-        if not login:
-            raise ValueError('Users must have an login')
-
         if not phone_number:
             raise ValueError('Users must have a phone_number')
 
         user = self.model(
             email=self.normalize_email(email),
-            login=login,
             name=name,
             phone_number=phone_number
         )
@@ -29,7 +25,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, name, login, phone_number, password=None):
+    def create_superuser(self, email, name, phone_number, password=None):
         """
         Creates and saves a superuser with the given email, name
         login, phone_number and password.
@@ -37,7 +33,6 @@ class UserManager(BaseUserManager):
         user = self.create_user(
             email=email,
             name=name,
-            login=login,
             password=password,
             phone_number=phone_number
         )
@@ -53,8 +48,7 @@ class User(AbstractBaseUser):
 
     name = models.CharField(max_length=125)
     email = models.EmailField(unique=True)
-    phone_number = PhoneNumberField()
-    login = models.CharField(max_length=125, unique=True)
+    phone_number = PhoneNumberField(unique=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     created_date = models.DateField(auto_now_add=True)
@@ -62,9 +56,9 @@ class User(AbstractBaseUser):
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'login'
+    USERNAME_FIELD = 'phone_number'
     EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'email', 'phone_number']
+    REQUIRED_FIELDS = ['name', 'email']
 
     def __str__(self):
         return self.login
