@@ -46,9 +46,14 @@ class BicycleListAPI(ListAPIView):
             end_date__gte=datetime.now()
         )
 
+        if query:
+            bicycles_queryset = Bicycle.objects.filter(content_search=SearchQuery(query), is_active=True)
+        else:
+            bicycles_queryset = Bicycle.objects.filter(is_active=True)
+
         bicycles_queryset = (
-            Bicycle.objects.
-            filter(is_active=True, content_search=SearchQuery(query))
+            bicycles_queryset.
+            filter(is_active=True)
             .annotate(price=Subquery(price.values('price')),
                       start_date=Subquery(rental_days.values('start_date')),
                       end_date=Subquery(rental_days.values('end_date')))
