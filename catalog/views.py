@@ -30,7 +30,7 @@ class BicycleListAPI(ListAPIView):
     """
 
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['size', 'type', 'brand__name']
+    filterset_fields = ['size', 'type', 'brand__name', 'material']
 
     def get_queryset(self):
 
