@@ -160,6 +160,13 @@ class Price(models.Model):
 
 
 class Order(models.Model):
+
+    class Status(models.TextChoices):
+        IN_PROCESSING = 'PR', _('В обработке')
+        DELIVERED = 'DE', _('Достовляется')
+        COMPLETED = 'CO', _('Завершен')
+        ACCIDENT = 'AC', _('Происшествие')
+
     created_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name=_('Дата создания записи')
@@ -175,6 +182,16 @@ class Order(models.Model):
         max_digits=10,
         verbose_name=_('полная сумма заказа'),
         help_text=_('format: required, decimal_places=2, max_digits=10')
+    )
+    is_paid = models.BooleanField(
+        verbose_name=_('статус платежа'),
+        help_text=_('format: required, True=paid'),
+        default=True
+    )
+    status = models.CharField(
+        max_length=2,
+        verbose_name='статус заказа',
+        help_text=_('format: required')
     )
 
 

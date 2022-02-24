@@ -68,4 +68,3 @@ class OrderListAPI(ListAPIView):
 class OrderCreateAPI(CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = OrderCreateSerializer
-
