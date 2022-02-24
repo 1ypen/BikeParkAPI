@@ -2,6 +2,9 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 
+from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.indexes import GinIndex
+
 from datetime import datetime
 import pytz
 
@@ -115,8 +118,13 @@ class Bicycle(models.Model):
         help_text=_("format: true=bicycle visible")
     )
 
+    content_search = SearchVectorField(null=True)
+
     def __str__(self):
         return self.name
+
+    class Meta:
+        indexes = [GinIndex(fields=["content_search"])]
 
 
 class Price(models.Model):

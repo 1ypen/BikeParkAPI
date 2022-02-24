@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
 
     # external apps
     'rest_framework',
@@ -35,7 +36,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'phonenumber_field',
     'djoser',
-    
+    'django_extensions',
+
     # local apps
     'catalog',
     'account',

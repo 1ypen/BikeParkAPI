@@ -4,6 +4,7 @@ from django.db.models import OuterRef, Subquery
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.postgres.search import SearchQuery
 
 
 from .models import Bicycle, Order, Price, OrderDetail
@@ -30,9 +31,11 @@ class BicycleListAPI(ListAPIView):
     """
 
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['size', 'type', 'brand__name', 'material']
+    filterset_fields = ['size', 'type', 'material']
 
     def get_queryset(self):
+
+        query = self.request.GET.get("q")
 
         price = Price.objects.filter(
             bicycle=OuterRef('pk'),
@@ -45,13 +48,14 @@ class BicycleListAPI(ListAPIView):
 
         bicycles_queryset = (
             Bicycle.objects.
-            filter(is_active=True)
+            filter(is_active=True, content_search=SearchQuery(query))
             .annotate(price=Subquery(price.values('price')),
                       start_date=Subquery(rental_days.values('start_date')),
                       end_date=Subquery(rental_days.values('end_date')))
             .select_related('brand')
             .values('id', 'name', 'brand__name', 'price', 'cover_image', 'wheel_diameter', 'start_date', 'end_date')
         )
+
         return bicycles_queryset
 
     def get_serializer_class(self):
