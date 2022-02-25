@@ -199,7 +199,8 @@ class Order(models.Model):
     status = models.CharField(
         max_length=2,
         verbose_name='статус заказа',
-        help_text=_('format: required')
+        help_text=_('format: required'),
+        choices=Status.choices
     )
 
 
