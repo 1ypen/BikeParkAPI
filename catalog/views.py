@@ -4,6 +4,7 @@ from django.contrib.postgres.search import SearchQuery
 from django.db.models import OuterRef, Subquery, Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Bicycle, Order, Price, OrderDetail
@@ -31,6 +32,7 @@ class BicycleListAPI(ListAPIView):
 
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['size', 'type', 'material']
+    pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
 
@@ -68,6 +70,7 @@ class BicycleListAPI(ListAPIView):
 
 class OrderListAPI(ListAPIView):
     serializer_class = OrderSerializer
+    pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
         query = self.request.GET.get("query")
