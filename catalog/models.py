@@ -194,7 +194,7 @@ class Order(models.Model):
     is_paid = models.BooleanField(
         verbose_name=_('статус платежа'),
         help_text=_('format: required, True=paid'),
-        default=True
+        default=False
     )
     status = models.CharField(
         max_length=2,

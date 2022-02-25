@@ -1,11 +1,10 @@
 from datetime import datetime
 
-from django.db.models import OuterRef, Subquery
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.permissions import IsAuthenticated
 from django.contrib.postgres.search import SearchQuery
-
+from django.db.models import OuterRef, Subquery, Q
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Bicycle, Order, Price, OrderDetail
 from .serializers import BicycleDetailSerializer, BicycleListSerializer, OrderCreateSerializer, OrderSerializer
@@ -52,13 +51,13 @@ class BicycleListAPI(ListAPIView):
             bicycles_queryset = Bicycle.objects.filter(is_active=True)
 
         bicycles_queryset = (
-            bicycles_queryset.
-            filter(is_active=True)
-            .annotate(price=Subquery(price.values('price')),
-                      start_date=Subquery(rental_days.values('start_date')),
-                      end_date=Subquery(rental_days.values('end_date')))
-            .select_related('brand')
-            .values('id', 'name', 'brand__name', 'price', 'cover_image', 'wheel_diameter', 'start_date', 'end_date')
+            bicycles_queryset
+                .filter(is_active=True)
+                .annotate(price=Subquery(price.values('price')),
+                          start_date=Subquery(rental_days.values('start_date')),
+                          end_date=Subquery(rental_days.values('end_date')))
+                .select_related('brand')
+                .values('id', 'name', 'brand__name', 'price', 'cover_image', 'wheel_diameter', 'start_date', 'end_date')
         )
 
         return bicycles_queryset
@@ -69,9 +68,20 @@ class BicycleListAPI(ListAPIView):
 
 class OrderListAPI(ListAPIView):
     serializer_class = OrderSerializer
-    queryset = Order.objects.all().\
-        prefetch_related('order_details')\
 
+    def get_queryset(self):
+        query = self.request.GET.get("query")
+
+        queryset = (
+            Order.objects.all()
+                .prefetch_related('order_details')
+        )
+        if query == 'completed':
+            queryset = queryset.filter(status='CO')
+        elif query == 'unfulfilled':
+            queryset = queryset.filter(~Q(status='CO'))
+
+        return queryset
 
 
 class OrderCreateAPI(CreateAPIView):

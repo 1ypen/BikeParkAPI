@@ -66,10 +66,11 @@ class BicycleListSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
 
     bicycles = OrderDetailSerializer(many=True, source='order_details')
+    status = serializers.CharField(source='get_status_display')
 
     class Meta:
         model = Order
-        fields = ('bicycles', )
+        fields = ('id', 'bicycles', 'created_date', 'total_sum', 'status')
 
 
 class OrderCreateSerializer(serializers.ModelSerializer):
