@@ -200,7 +200,8 @@ class Order(models.Model):
         max_length=2,
         verbose_name='статус заказа',
         help_text=_('format: required'),
-        choices=Status.choices
+        choices=Status.choices,
+        default=Status.IN_PROCESSING
     )
 
 
