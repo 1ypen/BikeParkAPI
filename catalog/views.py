@@ -36,7 +36,7 @@ class BicycleListAPI(ListAPIView):
 
     def get_queryset(self):
 
-        query = self.request.GET.get("q")
+        search = self.request.GET.get("search")
 
         price = Price.objects.filter(
             bicycle=OuterRef('pk'),
@@ -47,8 +47,8 @@ class BicycleListAPI(ListAPIView):
             end_date__gte=datetime.now()
         )
 
-        if query:
-            bicycles_queryset = Bicycle.objects.filter(content_search=SearchQuery(query), is_active=True)
+        if search:
+            bicycles_queryset = Bicycle.objects.filter(content_search=SearchQuery(search), is_active=True)
         else:
             bicycles_queryset = Bicycle.objects.filter(is_active=True)
 
@@ -76,7 +76,7 @@ class OrderListAPI(ListAPIView):
         query = self.request.GET.get("query")
 
         queryset = (
-            Order.objects.all()
+            Order.objects.filter(user=self.request.user)
                 .prefetch_related('order_details')
         )
         if query == 'completed':
