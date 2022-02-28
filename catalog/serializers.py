@@ -34,14 +34,22 @@ class OrderDetailSerializer(serializers.ModelSerializer):
     start_date = serializers.DateTimeField()
     end_date = serializers.DateTimeField()
     bicycle_name = serializers.CharField(source='bicycle.name')
+    bicycle_image = serializers.SerializerMethodField()
     bicycle_price = serializers.DecimalField(
         decimal_places=2,
         max_digits=7
     )
 
+    def get_bicycle_image(self, instance):
+        request = self.context.get('request')
+        print(request)
+        domain = request.build_absolute_uri('/')[:-1]
+        photo_url = instance.bicycle.cover_image.url
+        return domain + photo_url
+
     class Meta:
         model = OrderDetail
-        fields = ('start_date', 'end_date', 'bicycle_name', 'bicycle_price')
+        fields = ('start_date', 'end_date', 'bicycle_name', 'bicycle_price', 'bicycle_image')
 
 
 class BicycleListSerializer(serializers.ModelSerializer):
@@ -102,4 +110,4 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         return order
 
     def to_representation(self, instance):
-        return OrderSerializer(instance).data
+        return OrderSerializer(instance, context=self.context).data

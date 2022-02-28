@@ -71,6 +71,7 @@ class BicycleListAPI(ListAPIView):
 class OrderListAPI(ListAPIView):
     serializer_class = OrderSerializer
     pagination_class = LimitOffsetPagination
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         query = self.request.GET.get("query")
