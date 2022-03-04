@@ -203,6 +203,11 @@ class Order(models.Model):
         choices=Status.choices,
         default=Status.IN_PROCESSING
     )
+    address = models.CharField(
+        max_length=255,
+        verbose_name='адрес доставки',
+        help_text=_('format: required'),
+    )
 
 
 class OrderDetail(models.Model):
