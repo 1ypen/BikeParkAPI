@@ -58,12 +58,10 @@ class BicycleListSerializer(serializers.ModelSerializer):
     brand_name = serializers.CharField(source='brand__name')
     price = serializers.DecimalField(max_digits=7, decimal_places=2)
     cover_image = serializers.SerializerMethodField()
-    start_date = serializers.DateTimeField()
-    end_date = serializers.DateTimeField()
 
     class Meta:
         model = Bicycle
-        fields = ('id', 'name', 'cover_image', 'wheel_diameter', 'brand_name', 'price', 'start_date', 'end_date')
+        fields = ('id', 'name', 'cover_image', 'wheel_diameter', 'brand_name', 'price')
 
     def get_cover_image(self, bicycle):
         request = self.context.get('request')

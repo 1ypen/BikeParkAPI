@@ -42,10 +42,6 @@ class BicycleListAPI(ListAPIView):
             bicycle=OuterRef('pk'),
             is_current=True
         )
-        rental_days = OrderDetail.objects.filter(
-            bicycle=OuterRef('pk'),
-            end_date__gte=datetime.now()
-        )
 
         if search:
             bicycles_queryset = Bicycle.objects.filter(content_search=SearchQuery(search), is_active=True)
@@ -55,11 +51,9 @@ class BicycleListAPI(ListAPIView):
         bicycles_queryset = (
             bicycles_queryset
                 .filter(is_active=True)
-                .annotate(price=Subquery(price.values('price')),
-                          start_date=Subquery(rental_days.values('start_date')),
-                          end_date=Subquery(rental_days.values('end_date')))
+                .annotate(price=Subquery(price.values('price')))
                 .select_related('brand')
-                .values('id', 'name', 'brand__name', 'price', 'cover_image', 'wheel_diameter', 'start_date', 'end_date')
+                .values('id', 'name', 'brand__name', 'price', 'cover_image', 'wheel_diameter')
         )
 
         return bicycles_queryset
