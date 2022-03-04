@@ -230,3 +230,18 @@ class OrderDetail(models.Model):
         on_delete=models.DO_NOTHING,
         related_name='order_details'
     )
+    flashlight = models.BooleanField(
+        default=False,
+        verbose_name=_('нужен ли фонарик'),
+        help_text=_('format: required, true=needed')
+    )
+    helmet = models.BooleanField(
+        default=False,
+        verbose_name=_('нужен ли шлем'),
+        help_text=_('format: required, true=needed')
+    )
+    lock = models.BooleanField(
+        default=False,
+        verbose_name=_('нужен ли замок'),
+        help_text=_('format: required, true=needed')
+    )

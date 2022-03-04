@@ -42,14 +42,15 @@ class OrderDetailSerializer(serializers.ModelSerializer):
 
     def get_bicycle_image(self, instance):
         request = self.context.get('request')
-        print(request)
         domain = request.build_absolute_uri('/')[:-1]
         photo_url = instance.bicycle.cover_image.url
         return domain + photo_url
 
     class Meta:
         model = OrderDetail
-        fields = ('start_date', 'end_date', 'bicycle_name', 'bicycle_price', 'bicycle_image')
+        fields = ('start_date', 'end_date', 'bicycle_name',
+                  'bicycle_price', 'bicycle_image', 'flashlight',
+                  'helmet', 'lock')
 
 
 class BicycleListSerializer(serializers.ModelSerializer):
@@ -104,7 +105,10 @@ class OrderCreateSerializer(serializers.ModelSerializer):
                 bicycle_id=bicycle.get('id'),
                 start_date=bicycle.get('start_date'),
                 end_date=bicycle.get('end_date'),
-                bicycle_price=bicycle.get('bicycle_price')
+                bicycle_price=bicycle.get('bicycle_price'),
+                flashlight=bicycle.get('flashlight', False),
+                helmet=bicycle.get('helmet', False),
+                lock=bicycle.get('lock', False),
             )
 
         return order
